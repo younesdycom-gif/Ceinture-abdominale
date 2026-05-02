@@ -1,0 +1,1123 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>IKEEPFIT — Ceinture Lombaire Chauffante & Massante</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Bebas+Neue&display=swap" rel="stylesheet"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/SplitText.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --orange:       #FF6A00;
+      --orange-l:     #FF8C38;
+      --orange-xl:    #FFB26B;
+      --orange-bg:    #FFF3E8;
+      --orange-glow:  rgba(255,106,0,0.18);
+      --black:        #0F0F0F;
+      --dark:         #1A1A1A;
+      --mid:          #555;
+      --muted:        #888;
+      --light:        #F5F5F5;
+      --warm:         #FFFAF7;
+      --warm2:        #FFF5EE;
+      --white:        #FFFFFF;
+      --border:       #E8E0D8;
+      --border-s:     rgba(255,106,0,0.2);
+      --font:         'Inter', sans-serif;
+      --display:      'Bebas Neue', sans-serif;
+      --shadow:       0 4px 32px rgba(0,0,0,0.08);
+      --shadow-l:     0 20px 80px rgba(0,0,0,0.12);
+      --shadow-o:     0 8px 40px rgba(255,106,0,0.25);
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: var(--font); background: var(--white); color: var(--black); overflow-x: hidden; cursor: none; }
+
+    /* ─── CURSOR ─── */
+    #cursor { position: fixed; top:0; left:0; z-index:9999; pointer-events:none; }
+    #cursor-dot { width:8px; height:8px; background:var(--orange); border-radius:50%; position:absolute; transform:translate(-50%,-50%); }
+    #cursor-ring { width:38px; height:38px; border:2px solid var(--orange); border-radius:50%; position:absolute; transform:translate(-50%,-50%); opacity:.5; transition:width .25s,height .25s,opacity .25s; }
+    .cursor-grow #cursor-ring { width:60px; height:60px; opacity:.8; background:rgba(255,106,0,.06); }
+
+    /* ─── PROGRESS ─── */
+    #prog { position:fixed; top:0; left:0; height:3px; background:linear-gradient(90deg,var(--orange),var(--orange-l)); z-index:2000; width:0; box-shadow:0 0 8px var(--orange-glow); }
+
+    /* ─── NAV ─── */
+    nav { position:fixed; top:0; left:0; right:0; z-index:1000; padding:22px 60px; display:flex; align-items:center; justify-content:space-between; transition:all .4s; }
+    nav.stuck { background:rgba(255,255,255,.95); backdrop-filter:blur(20px); border-bottom:1px solid var(--border); padding:14px 60px; box-shadow:0 2px 20px rgba(0,0,0,.06); }
+    .nav-logo { font-family:var(--display); font-size:26px; letter-spacing:3px; color:var(--black); text-decoration:none; }
+    .nav-logo span { color:var(--orange); }
+    .nav-links { display:flex; gap:36px; align-items:center; }
+    .nav-links a { color:var(--mid); font-size:13px; font-weight:500; text-decoration:none; letter-spacing:.5px; transition:color .3s; }
+    .nav-links a:hover { color:var(--black); }
+    .nav-cta { background:var(--orange)!important; color:var(--white)!important; padding:11px 26px; border-radius:100px; font-weight:700!important; box-shadow:var(--shadow-o); transition:all .3s!important; }
+    .nav-cta:hover { background:var(--orange-l)!important; transform:translateY(-1px); }
+    @media(max-width:900px){nav{padding:14px 20px;} nav.stuck{padding:12px 20px;} .nav-links{display:none;}}
+
+    /* ─── HERO ─── */
+    #hero { min-height:100vh; display:flex; align-items:center; position:relative; overflow:hidden; background:var(--warm); padding:120px 60px 80px; }
+    .hero-blob { position:absolute; border-radius:50%; filter:blur(80px); pointer-events:none; }
+    .blob1 { width:600px; height:600px; background:radial-gradient(circle,rgba(255,106,0,.12) 0%,transparent 70%); top:-100px; right:-100px; animation:blobMove 8s ease-in-out infinite alternate; }
+    .blob2 { width:400px; height:400px; background:radial-gradient(circle,rgba(255,178,107,.1) 0%,transparent 70%); bottom:0; left:0; animation:blobMove 10s ease-in-out infinite alternate-reverse; }
+    @keyframes blobMove { to { transform:translate(40px,-40px) scale(1.1); } }
+
+    /* Hero video BG */
+    .hero-video-bg { position:absolute; inset:0; z-index:0; overflow:hidden; }
+    .hero-video-bg video { width:100%; height:100%; object-fit:cover; opacity:.08; }
+    .hero-video-bg::after { content:''; position:absolute; inset:0; background:linear-gradient(135deg,rgba(255,250,247,.97) 0%,rgba(255,250,247,.85) 50%,rgba(255,250,247,.75) 100%); }
+
+    .hero-inner { position:relative; z-index:2; max-width:1300px; margin:0 auto; width:100%; display:grid; grid-template-columns:1fr 1fr; gap:80px; align-items:center; }
+    @media(max-width:900px){ .hero-inner{grid-template-columns:1fr; gap:40px;} #hero{padding:100px 20px 60px;} }
+
+    /* Left */
+    .hero-tag { display:inline-flex; align-items:center; gap:8px; background:var(--orange-bg); border:1px solid var(--border-s); border-radius:100px; padding:6px 16px; font-size:11px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--orange); margin-bottom:28px; }
+    .hero-tag::before { content:''; width:6px; height:6px; border-radius:50%; background:var(--orange); animation:pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1);} 50%{opacity:.4;transform:scale(1.6);} }
+
+    .hero-title { font-family:var(--display); font-size:clamp(52px,7vw,96px); line-height:.92; letter-spacing:1px; margin-bottom:24px; color:var(--black); }
+    .hero-title .line { display:block; overflow:hidden; }
+    .hero-title .line span { display:block; }
+    .hero-title .o { color:var(--orange); }
+
+    .hero-sub { font-size:17px; line-height:1.75; color:var(--mid); max-width:460px; margin-bottom:40px; }
+
+    .hero-btns { display:flex; gap:16px; align-items:center; flex-wrap:wrap; }
+    .btn-prime { display:inline-flex; align-items:center; gap:10px; background:var(--orange); color:var(--white); padding:16px 36px; border-radius:100px; font-size:15px; font-weight:700; text-decoration:none; box-shadow:var(--shadow-o); transition:all .3s; position:relative; overflow:hidden; cursor:none; }
+    .btn-prime::before { content:''; position:absolute; inset:0; background:linear-gradient(135deg,rgba(255,255,255,.15),transparent); border-radius:inherit; }
+    .btn-prime:hover { transform:translateY(-3px); box-shadow:0 12px 50px rgba(255,106,0,.4); }
+    .btn-prime svg { transition:transform .3s; }
+    .btn-prime:hover svg { transform:translateX(4px); }
+
+    .btn-ghost { display:inline-flex; align-items:center; gap:12px; color:var(--dark); font-size:14px; font-weight:600; text-decoration:none; transition:color .3s; cursor:none; }
+    .btn-ghost .play { width:48px; height:48px; border-radius:50%; border:2px solid var(--border); display:flex; align-items:center; justify-content:center; background:var(--white); box-shadow:var(--shadow); transition:all .3s; }
+    .btn-ghost:hover .play { border-color:var(--orange); background:var(--orange-bg); box-shadow:var(--shadow-o); }
+    .btn-ghost:hover { color:var(--orange); }
+
+    .hero-trust { display:flex; align-items:center; gap:20px; margin-top:40px; padding-top:32px; border-top:1px solid var(--border); }
+    .trust-avatars { display:flex; }
+    .trust-avatars span { width:36px; height:36px; border-radius:50%; border:2px solid var(--white); margin-left:-10px; background:linear-gradient(135deg,var(--orange),var(--orange-l)); display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:700; color:var(--white); }
+    .trust-avatars span:first-child { margin-left:0; }
+    .trust-text { font-size:13px; color:var(--mid); }
+    .trust-text strong { color:var(--black); }
+    .trust-stars { color:var(--orange); font-size:14px; }
+
+    /* Right - product visual */
+    .hero-visual { position:relative; display:flex; align-items:center; justify-content:center; }
+    .hero-img-wrap { position:relative; width:100%; max-width:500px; }
+    .hero-img-bg { position:absolute; inset:-30px; border-radius:50%; background:radial-gradient(circle,rgba(255,106,0,.1) 0%,transparent 70%); animation:blobMove 6s ease-in-out infinite alternate; }
+    .hero-img-main { width:100%; position:relative; z-index:2; animation:float 5s ease-in-out infinite; drop-shadow:0 40px 80px rgba(255,106,0,.2); filter:drop-shadow(0 30px 60px rgba(255,106,0,.2)); }
+    @keyframes float { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-16px);} }
+
+    /* Floating chips */
+    .chip { position:absolute; z-index:10; background:var(--white); border-radius:16px; padding:12px 18px; box-shadow:0 8px 32px rgba(0,0,0,.12); display:flex; align-items:center; gap:10px; animation:chipFloat 4s ease-in-out infinite; }
+    .chip-1 { top:10%; left:-10%; animation-delay:0s; }
+    .chip-2 { bottom:20%; right:-8%; animation-delay:1.5s; }
+    .chip-3 { top:55%; left:-14%; animation-delay:.8s; }
+    @keyframes chipFloat { 0%,100%{transform:translateY(0) rotate(-1deg);} 50%{transform:translateY(-8px) rotate(1deg);} }
+    .chip-icon { width:36px; height:36px; border-radius:10px; background:var(--orange-bg); display:flex; align-items:center; justify-content:center; }
+    .chip-label { font-size:11px; font-weight:700; color:var(--black); letter-spacing:.5px; text-transform:uppercase; }
+    .chip-value { font-size:18px; font-weight:800; color:var(--orange); line-height:1; }
+
+    /* ─── MARQUEE ─── */
+    .marquee { background:var(--orange); padding:14px 0; overflow:hidden; }
+    .marquee-track { display:flex; gap:50px; width:max-content; animation:marquee 22s linear infinite; }
+    @keyframes marquee { to{transform:translateX(-50%);} }
+    .marquee-item { display:flex; align-items:center; gap:10px; font-size:12px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:rgba(255,255,255,.9); white-space:nowrap; }
+    .marquee-item::before { content:'✦'; font-size:10px; color:rgba(255,255,255,.6); }
+
+    /* ─── SECTION BASE ─── */
+    section { padding:120px 60px; }
+    @media(max-width:900px){section{padding:80px 20px;}}
+    .label { display:inline-flex; align-items:center; gap:10px; font-size:11px; font-weight:700; letter-spacing:3px; text-transform:uppercase; color:var(--orange); margin-bottom:16px; }
+    .label::before { content:''; width:24px; height:2px; background:var(--orange); }
+    .title { font-family:var(--display); font-size:clamp(36px,5vw,64px); line-height:.95; letter-spacing:1px; margin-bottom:20px; color:var(--black); }
+    .title .o { color:var(--orange); }
+    .desc { font-size:16px; color:var(--mid); line-height:1.8; max-width:560px; }
+    .center { text-align:center; }
+    .desc.center { margin:0 auto; }
+
+    /* ─── PROBLEM ─── */
+    #problem { background:var(--warm2); position:relative; overflow:hidden; }
+    #problem::before { content:''; position:absolute; top:0; left:50%; transform:translateX(-50%); width:500px; height:2px; background:linear-gradient(90deg,transparent,var(--orange),transparent); }
+
+    .prob-layout { max-width:1200px; margin:0 auto; display:grid; grid-template-columns:1fr 1fr; gap:80px; align-items:center; }
+    @media(max-width:900px){.prob-layout{grid-template-columns:1fr;}}
+
+    .prob-img { position:relative; border-radius:32px; overflow:hidden; box-shadow:var(--shadow-l); }
+    .prob-img img { width:100%; display:block; transition:transform .6s ease; }
+    .prob-img:hover img { transform:scale(1.04); }
+    .prob-img-overlay { position:absolute; inset:0; background:linear-gradient(180deg,transparent 40%,rgba(255,106,0,.15) 100%); pointer-events:none; }
+    .prob-badge { position:absolute; bottom:24px; left:24px; background:var(--white); border-radius:12px; padding:14px 20px; box-shadow:var(--shadow); }
+    .prob-badge-title { font-size:12px; color:var(--muted); }
+    .prob-badge-val { font-size:22px; font-weight:800; color:var(--orange); }
+
+    .prob-content { display:flex; flex-direction:column; gap:0; }
+    .prob-item { display:flex; gap:20px; padding:28px 0; border-bottom:1px solid var(--border); position:relative; overflow:hidden; }
+    .prob-item:last-child { border-bottom:none; }
+    .prob-item::before { content:''; position:absolute; left:0; top:0; bottom:0; width:0; background:linear-gradient(90deg,var(--orange-bg),transparent); transition:width .4s; z-index:0; }
+    .prob-item:hover::before { width:100%; }
+    .prob-num { font-family:var(--display); font-size:16px; color:var(--orange); min-width:32px; position:relative; z-index:1; margin-top:2px; }
+    .prob-text { position:relative; z-index:1; }
+    .prob-text h3 { font-size:18px; font-weight:700; margin-bottom:8px; color:var(--black); }
+    .prob-text p { font-size:14px; color:var(--mid); line-height:1.7; }
+
+    /* ─── TECHNOLOGY ─── */
+    #technology { background:var(--white); }
+    .tech-layout { max-width:1200px; margin:0 auto; display:grid; grid-template-columns:1fr 1fr; gap:100px; align-items:center; }
+    @media(max-width:900px){.tech-layout{grid-template-columns:1fr;gap:48px;}}
+
+    .tech-img { position:relative; }
+    .tech-img-main { width:100%; border-radius:32px; box-shadow:var(--shadow-l); display:block; transition:transform .6s; }
+    .tech-img:hover .tech-img-main { transform:scale(1.02); }
+    .tech-img-badge { position:absolute; top:24px; right:-20px; background:var(--orange); color:var(--white); border-radius:16px; padding:16px 20px; box-shadow:var(--shadow-o); text-align:center; }
+    .tech-img-badge .big { font-family:var(--display); font-size:36px; line-height:1; }
+    .tech-img-badge small { font-size:11px; font-weight:600; letter-spacing:1px; }
+
+    .tech-features { display:flex; flex-direction:column; gap:0; }
+    .tech-row { display:flex; gap:20px; padding:28px 0; border-bottom:1px solid var(--border); cursor:none; position:relative; }
+    .tech-row:first-child { border-top:1px solid var(--border); }
+    .tech-row-icon { width:52px; height:52px; border-radius:14px; background:var(--orange-bg); border:1px solid var(--border-s); display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:all .3s; }
+    .tech-row:hover .tech-row-icon { background:var(--orange); }
+    .tech-row:hover .tech-row-icon svg path, .tech-row:hover .tech-row-icon svg circle, .tech-row:hover .tech-row-icon svg rect { stroke:white!important; fill:white!important; opacity:1!important; }
+    .tech-row-body h3 { font-size:17px; font-weight:700; margin-bottom:6px; }
+    .tech-row-body p { font-size:14px; color:var(--mid); line-height:1.6; }
+    .tech-row-val { margin-left:auto; font-family:var(--display); font-size:30px; color:var(--orange); align-self:center; flex-shrink:0; }
+
+    /* ─── HOW IT WORKS ─── */
+    #how-it-works { background:var(--warm); position:relative; overflow:hidden; }
+
+    /* Video modal trigger */
+    .video-trigger { max-width:900px; margin:60px auto 0; border-radius:28px; overflow:hidden; position:relative; cursor:none; box-shadow:var(--shadow-l); }
+    .video-trigger video { width:100%; display:block; aspect-ratio:16/9; object-fit:cover; }
+    .video-overlay { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,.25); transition:background .3s; }
+    .video-trigger:hover .video-overlay { background:rgba(0,0,0,.1); }
+    .play-btn { width:80px; height:80px; border-radius:50%; background:var(--white); display:flex; align-items:center; justify-content:center; box-shadow:0 8px 40px rgba(0,0,0,.2); transition:transform .3s,box-shadow .3s; }
+    .video-trigger:hover .play-btn { transform:scale(1.1); box-shadow:0 12px 60px rgba(0,0,0,.3); }
+
+    .steps-grid { max-width:1100px; margin:80px auto 0; display:grid; grid-template-columns:repeat(3,1fr); gap:32px; }
+    @media(max-width:900px){.steps-grid{grid-template-columns:1fr;}}
+    .step-card { background:var(--white); border:1px solid var(--border); border-radius:24px; padding:40px 32px; position:relative; overflow:hidden; transition:all .35s; box-shadow:var(--shadow); }
+    .step-card:hover { transform:translateY(-8px); box-shadow:var(--shadow-l); border-color:var(--border-s); }
+    .step-card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg,var(--orange),var(--orange-l)); transform:scaleX(0); transform-origin:left; transition:transform .4s; }
+    .step-card:hover::before { transform:scaleX(1); }
+    .step-num { font-family:var(--display); font-size:64px; color:var(--orange-bg); position:absolute; top:16px; right:24px; line-height:1; }
+    .step-icon { width:56px; height:56px; border-radius:16px; background:var(--orange); display:flex; align-items:center; justify-content:center; margin-bottom:24px; box-shadow:var(--shadow-o); }
+    .step-card h3 { font-size:18px; font-weight:700; margin-bottom:10px; }
+    .step-card p { font-size:14px; color:var(--mid); line-height:1.7; }
+
+    /* ─── BENEFITS ─── */
+    #benefits { background:var(--black); color:var(--white); }
+    #benefits .label { color:var(--orange-l); }
+    #benefits .title { color:var(--white); }
+    .benefits-layout { max-width:1200px; margin:0 auto; display:grid; grid-template-columns:1fr 1fr; gap:80px; align-items:center; }
+    @media(max-width:900px){.benefits-layout{grid-template-columns:1fr;}}
+
+    .benefits-img { position:relative; }
+    .benefits-img img { width:100%; border-radius:28px; display:block; filter:brightness(.95); }
+    .benefits-img-overlay { position:absolute; inset:0; border-radius:28px; background:linear-gradient(135deg,rgba(255,106,0,.1) 0%,transparent 60%); }
+
+    .stats-2x2 { display:grid; grid-template-columns:1fr 1fr; gap:2px; margin-top:40px; }
+    .stat-box { background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.08); padding:36px 28px; transition:all .3s; }
+    .stat-box:hover { background:rgba(255,106,0,.08); border-color:rgba(255,106,0,.2); }
+    .stat-big { font-family:var(--display); font-size:52px; color:var(--orange); line-height:1; margin-bottom:6px; }
+    .stat-label { font-size:13px; color:rgba(255,255,255,.5); line-height:1.5; }
+
+    /* ─── TESTIMONIALS ─── */
+    #testimonials { background:var(--warm); overflow:hidden; }
+    .testi-track { display:flex; gap:24px; margin-top:60px; animation:slide 35s linear infinite; width:max-content; }
+    .testi-track:hover { animation-play-state:paused; }
+    @keyframes slide { to{transform:translateX(-50%);} }
+    .testi-card { width:360px; flex-shrink:0; background:var(--white); border:1px solid var(--border); border-radius:20px; padding:32px; box-shadow:var(--shadow); transition:all .3s; }
+    .testi-card:hover { border-color:var(--border-s); box-shadow:var(--shadow-l); transform:translateY(-4px); }
+    .testi-stars { color:var(--orange); font-size:15px; margin-bottom:14px; letter-spacing:2px; }
+    .testi-text { font-size:15px; color:var(--dark); line-height:1.7; margin-bottom:20px; font-style:italic; }
+    .testi-author { display:flex; align-items:center; gap:12px; }
+    .testi-av { width:42px; height:42px; border-radius:50%; background:linear-gradient(135deg,var(--orange),var(--orange-l)); display:flex; align-items:center; justify-content:center; font-weight:700; color:var(--white); }
+    .testi-name { font-size:14px; font-weight:700; color:var(--black); }
+    .testi-info { font-size:12px; color:var(--muted); }
+    .verified { color:var(--orange); font-weight:600; }
+
+    /* ─── SHOWCASE ─── */
+    #showcase { background:var(--white); }
+    .showcase-layout { max-width:1200px; margin:0 auto; display:grid; grid-template-columns:1fr 1fr; gap:80px; align-items:center; }
+    @media(max-width:900px){.showcase-layout{grid-template-columns:1fr;}}
+    .showcase-img { position:relative; }
+    .showcase-img img { width:100%; border-radius:32px; box-shadow:var(--shadow-l); display:block; transition:transform .6s; }
+    .showcase-img:hover img { transform:scale(1.02); }
+    .showcase-badge { position:absolute; top:24px; left:24px; background:var(--orange); color:var(--white); padding:8px 18px; border-radius:100px; font-size:12px; font-weight:700; letter-spacing:1px; box-shadow:var(--shadow-o); }
+    .showcase-content { }
+    .showcase-content > p { font-size:16px; color:var(--mid); line-height:1.8; margin-bottom:36px; }
+    .spec-grid { display:flex; flex-direction:column; gap:12px; margin-bottom:40px; }
+    .spec-row { display:flex; align-items:center; gap:14px; padding:14px 18px; background:var(--warm); border:1px solid var(--border); border-radius:12px; transition:all .3s; }
+    .spec-row:hover { border-color:var(--border-s); background:var(--orange-bg); transform:translateX(4px); }
+    .spec-dot { width:8px; height:8px; border-radius:50%; background:var(--orange); flex-shrink:0; }
+    .spec-row span { font-size:14px; }
+    .spec-row strong { color:var(--black); font-weight:700; }
+    .spec-row em { color:var(--mid); font-style:normal; margin-left:6px; }
+
+    /* ─── LIFESTYLE ─── */
+    #lifestyle { background:var(--warm2); }
+    .lifestyle-layout { max-width:1200px; margin:0 auto; display:grid; grid-template-columns:1fr 1fr; gap:80px; align-items:center; }
+    @media(max-width:900px){.lifestyle-layout{grid-template-columns:1fr;}}
+    .lifestyle-img { border-radius:32px; overflow:hidden; box-shadow:var(--shadow-l); }
+    .lifestyle-img img { width:100%; display:block; transition:transform .6s; }
+    .lifestyle-img:hover img { transform:scale(1.04); }
+    .lifestyle-content h2 { font-family:var(--display); font-size:clamp(38px,4vw,56px); line-height:.95; letter-spacing:1px; margin-bottom:20px; }
+    .lifestyle-content > p { font-size:16px; color:var(--mid); line-height:1.8; margin-bottom:36px; }
+    .benefit-list { display:flex; flex-direction:column; gap:16px; margin-bottom:40px; }
+    .benefit-item { display:flex; align-items:flex-start; gap:14px; }
+    .benefit-icon { width:40px; height:40px; border-radius:10px; background:var(--orange-bg); border:1px solid var(--border-s); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+    .benefit-text h4 { font-size:15px; font-weight:700; margin-bottom:4px; }
+    .benefit-text p { font-size:13px; color:var(--mid); line-height:1.6; }
+
+    /* ─── CTA ─── */
+    #cta { background:var(--black); color:var(--white); position:relative; overflow:hidden; }
+    .cta-blob1 { position:absolute; width:700px; height:700px; border-radius:50%; background:radial-gradient(circle,rgba(255,106,0,.1) 0%,transparent 70%); top:-200px; right:-200px; animation:blobMove 10s ease-in-out infinite alternate; }
+    .cta-blob2 { position:absolute; width:500px; height:500px; border-radius:50%; background:radial-gradient(circle,rgba(255,178,107,.06) 0%,transparent 70%); bottom:-100px; left:-100px; animation:blobMove 12s ease-in-out infinite alternate-reverse; }
+    .cta-inner { max-width:800px; margin:0 auto; text-align:center; position:relative; z-index:1; }
+    .cta-inner h2 { font-family:var(--display); font-size:clamp(48px,8vw,100px); line-height:.9; letter-spacing:2px; margin-bottom:24px; }
+    .cta-inner p { font-size:17px; color:rgba(255,255,255,.6); line-height:1.7; margin-bottom:48px; }
+    .cta-btns { display:flex; gap:16px; justify-content:center; flex-wrap:wrap; }
+    .cta-note { font-size:13px; color:rgba(255,255,255,.4); margin-top:24px; }
+    .cta-note span { color:var(--orange-l); }
+    .cta-img-float { max-width:280px; margin:0 auto 48px; }
+    .cta-img-float img { width:100%; filter:drop-shadow(0 20px 60px rgba(255,106,0,.3)); animation:float 5s ease-in-out infinite; }
+
+    /* ─── COMMANDER (PRODUCT) ─── */
+    #commander { background:var(--warm); padding:100px 60px; }
+    @media(max-width:900px){#commander{padding:80px 20px;}}
+    .product-layout { max-width:1200px; margin:0 auto; display:grid; grid-template-columns:1fr 1fr; gap:80px; align-items:start; }
+    @media(max-width:900px){.product-layout{grid-template-columns:1fr; gap:40px;}}
+
+    /* Gallery */
+    .gallery { display:flex; flex-direction:column; gap:16px; position:sticky; top:100px; }
+    .gallery-main { border-radius:24px; overflow:hidden; background:var(--white); border:1px solid var(--border); box-shadow:var(--shadow-l); aspect-ratio:1; display:flex; align-items:center; justify-content:center; position:relative; }
+    .gallery-main img { width:100%; height:100%; object-fit:contain; padding:20px; transition:opacity .3s,transform .4s; }
+    .gallery-main img.switching { opacity:0; transform:scale(.97); }
+    .gallery-thumbs { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; }
+    .thumb { border-radius:14px; overflow:hidden; background:var(--white); border:2px solid var(--border); aspect-ratio:1; cursor:pointer; transition:all .25s; display:flex; align-items:center; justify-content:center; }
+    .thumb img { width:100%; height:100%; object-fit:contain; padding:8px; }
+    .thumb.active { border-color:var(--orange); box-shadow:0 0 0 3px rgba(255,106,0,.15); }
+    .thumb:hover { border-color:var(--orange-l); }
+
+    /* Product info */
+    .product-info { display:flex; flex-direction:column; gap:0; }
+    .product-badge-row { display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap; }
+    .prod-badge { padding:5px 12px; border-radius:100px; font-size:11px; font-weight:700; letter-spacing:1px; text-transform:uppercase; }
+    .badge-new { background:var(--orange); color:var(--white); }
+    .badge-stock { background:#E8F5E9; color:#2E7D32; }
+    .badge-promo { background:#FFF3E8; color:var(--orange); border:1px solid var(--border-s); }
+    .product-name-big { font-family:var(--display); font-size:clamp(32px,4vw,52px); line-height:.95; letter-spacing:1px; color:var(--black); margin-bottom:10px; }
+    .product-name-big span { color:var(--orange); }
+    .product-sub { font-size:14px; color:var(--mid); margin-bottom:16px; line-height:1.6; }
+
+    .product-stars-row { display:flex; align-items:center; gap:10px; margin-bottom:24px; padding-bottom:24px; border-bottom:1px solid var(--border); }
+    .stars { color:var(--orange); font-size:18px; letter-spacing:2px; }
+    .stars-count { font-size:14px; color:var(--mid); }
+    .stars-count a { color:var(--orange); text-decoration:none; font-weight:600; }
+
+    .price-block { display:flex; align-items:center; gap:16px; margin-bottom:24px; }
+    .price-main { font-family:var(--display); font-size:56px; color:var(--orange); line-height:1; letter-spacing:1px; }
+    .price-main sup { font-size:28px; }
+    .price-old { font-size:22px; color:var(--muted); text-decoration:line-through; font-weight:400; }
+    .price-save { background:var(--orange-bg); color:var(--orange); border:1px solid var(--border-s); border-radius:100px; padding:4px 12px; font-size:12px; font-weight:700; }
+
+    .product-perks { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:28px; }
+    .perk { display:flex; align-items:center; gap:8px; font-size:13px; color:var(--dark); }
+    .perk::before { content:'✓'; color:var(--orange); font-weight:800; font-size:14px; flex-shrink:0; }
+
+    /* Quantity */
+    .qty-row { display:flex; align-items:center; gap:16px; margin-bottom:24px; }
+    .qty-label { font-size:13px; font-weight:700; color:var(--black); letter-spacing:.5px; text-transform:uppercase; }
+    .qty-ctrl { display:flex; align-items:center; border:2px solid var(--border); border-radius:100px; overflow:hidden; }
+    .qty-btn { width:44px; height:44px; border:none; background:transparent; font-size:20px; font-weight:600; cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--dark); transition:background .2s; }
+    .qty-btn:hover { background:var(--orange-bg); color:var(--orange); }
+    .qty-val { width:48px; text-align:center; font-size:16px; font-weight:700; color:var(--black); border:none; background:transparent; outline:none; }
+
+    /* Buttons */
+    .product-btns { display:flex; flex-direction:column; gap:12px; margin-bottom:28px; }
+    .btn-cart { display:flex; align-items:center; justify-content:center; gap:10px; padding:18px 32px; border-radius:16px; font-size:16px; font-weight:700; text-decoration:none; cursor:pointer; border:none; transition:all .3s; }
+    .btn-buy-now { background:var(--orange); color:var(--white); box-shadow:var(--shadow-o); }
+    .btn-buy-now:hover { background:var(--orange-l); transform:translateY(-2px); box-shadow:0 12px 50px rgba(255,106,0,.4); }
+    .btn-add-cart { background:var(--white); color:var(--black); border:2px solid var(--black); }
+    .btn-add-cart:hover { background:var(--black); color:var(--white); transform:translateY(-2px); }
+
+    /* Trust */
+    .trust-row { display:flex; gap:0; border:1px solid var(--border); border-radius:16px; overflow:hidden; margin-bottom:28px; }
+    .trust-item { flex:1; display:flex; flex-direction:column; align-items:center; gap:6px; padding:16px 12px; font-size:11px; font-weight:600; color:var(--mid); text-align:center; border-right:1px solid var(--border); line-height:1.4; transition:background .2s; }
+    .trust-item:last-child { border-right:none; }
+    .trust-item:hover { background:var(--orange-bg); }
+    .trust-item svg { flex-shrink:0; }
+
+    /* Description accordion */
+    .desc-section { border-top:1px solid var(--border); padding-top:20px; }
+    .desc-toggle { display:flex; align-items:center; justify-content:space-between; cursor:pointer; font-size:15px; font-weight:700; color:var(--black); padding-bottom:16px; user-select:none; }
+    .desc-toggle svg { transition:transform .3s; }
+    .desc-toggle.open svg { transform:rotate(180deg); }
+    .desc-body { font-size:14px; color:var(--mid); line-height:1.8; display:none; padding-bottom:20px; border-bottom:1px solid var(--border); margin-bottom:20px; }
+    .desc-body.open { display:block; }
+
+    /* ─── FOOTER ─── */
+    footer { background:var(--black); padding:40px 60px; border-top:1px solid rgba(255,255,255,.06); }
+    .footer-inner { max-width:1200px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:20px; }
+    .footer-logo { font-family:var(--display); font-size:22px; letter-spacing:3px; color:var(--white); }
+    .footer-logo span { color:var(--orange); }
+    .footer-links { display:flex; gap:28px; }
+    .footer-links a { color:rgba(255,255,255,.35); font-size:13px; text-decoration:none; transition:color .3s; }
+    .footer-links a:hover { color:rgba(255,255,255,.8); }
+    .footer-copy { font-size:12px; color:rgba(255,255,255,.2); }
+
+    /* ─── VIDEO MODAL ─── */
+    #modal { position:fixed; inset:0; z-index:9000; display:flex; align-items:center; justify-content:center; opacity:0; pointer-events:none; transition:opacity .4s; }
+    #modal.open { opacity:1; pointer-events:all; }
+    .modal-bg { position:absolute; inset:0; background:rgba(0,0,0,.85); backdrop-filter:blur(8px); }
+    .modal-box { position:relative; z-index:1; width:90%; max-width:900px; border-radius:24px; overflow:hidden; box-shadow:0 40px 120px rgba(0,0,0,.5); }
+    .modal-box video { width:100%; display:block; }
+    .modal-close { position:absolute; top:16px; right:16px; z-index:2; width:44px; height:44px; border-radius:50%; background:rgba(0,0,0,.6); border:none; color:white; font-size:20px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:background .3s; }
+    .modal-close:hover { background:var(--orange); }
+
+    /* ─── REVEAL ─── */
+    .rv { opacity:0; transform:translateY(40px); }
+    .rv-l { opacity:0; transform:translateX(-40px); }
+    .rv-r { opacity:0; transform:translateX(40px); }
+    .rv-s { opacity:0; transform:scale(.9); }
+  </style>
+</head>
+<body>
+
+<div id="prog"></div>
+
+<div id="cursor">
+  <div id="cursor-dot"></div>
+  <div id="cursor-ring"></div>
+</div>
+
+<!-- NAV -->
+<nav id="nav">
+  <a href="#" class="nav-logo">IKEEP<span>FIT</span></a>
+  <div class="nav-links">
+    <a href="#problem">Problème</a>
+    <a href="#technology">Technologie</a>
+    <a href="#how-it-works">Comment ça marche</a>
+    <a href="#testimonials">Avis</a>
+    <a href="#commander" class="nav-cta">🛒 Commander</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-blob blob1"></div>
+  <div class="hero-blob blob2"></div>
+  <div class="hero-video-bg">
+    <video autoplay muted loop playsinline>
+      <source src="assets/video-hero.mp4" type="video/mp4"/>
+    </video>
+  </div>
+
+  <div class="hero-inner">
+    <div class="hero-left">
+      <div class="hero-tag rv">Technologie MAXwarm® 3.0</div>
+      <h1 class="hero-title">
+        <div class="line"><span class="rv">LIBÉREZ-VOUS</span></div>
+        <div class="line"><span class="rv">DE LA</span></div>
+        <div class="line"><span class="rv o">DOULEUR.</span></div>
+      </h1>
+      <p class="hero-sub rv">La ceinture lombaire intelligente qui combine chaleur thérapeutique et massage professionnel pour un soulagement immédiat et durable.</p>
+      <div class="hero-btns rv">
+        <a href="#commander" class="btn-prime">
+          Commander maintenant
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+        <a href="#" class="btn-ghost" id="openModal">
+          <div class="play">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M5 3l8 5-8 5V3z" fill="#FF6A00"/></svg>
+          </div>
+          Voir comment ça marche
+        </a>
+      </div>
+      <div class="hero-trust rv">
+        <div class="trust-avatars">
+          <span>M</span><span>T</span><span>S</span><span>P</span><span>+</span>
+        </div>
+        <div>
+          <div class="trust-stars">★★★★★</div>
+          <div class="trust-text"><strong>+50 000 utilisateurs</strong> soulagés · Note 4.8/5</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-visual rv-r">
+      <div class="hero-img-wrap">
+        <div class="hero-img-bg"></div>
+        <img class="hero-img-main" src="assets/femme-avant.png" alt="IKEEPFIT Pro Belt porté de face"/>
+
+        <div class="chip chip-1">
+          <div class="chip-icon">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 2a8 8 0 100 16A8 8 0 0010 2z" stroke="#FF6A00" stroke-width="1.5"/><path d="M6 10a4 4 0 108 0" fill="#FF6A00" opacity=".3"/></svg>
+          </div>
+          <div>
+            <div class="chip-label">Chaleur</div>
+            <div class="chip-value">45°C</div>
+          </div>
+        </div>
+
+        <div class="chip chip-2">
+          <div class="chip-icon">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 3v4M10 13v4M3 10h4M13 10h4" stroke="#FF6A00" stroke-width="1.5" stroke-linecap="round"/></svg>
+          </div>
+          <div>
+            <div class="chip-label">Autonomie</div>
+            <div class="chip-value">6H</div>
+          </div>
+        </div>
+
+        <div class="chip chip-3">
+          <div class="chip-icon">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 10m-6 0a6 6 0 1012 0 6 6 0 01-12 0" stroke="#FF6A00" stroke-width="1.5"/><path d="M7 10l2 2 4-4" stroke="#FF6A00" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div>
+            <div class="chip-label">Satisfaction</div>
+            <div class="chip-value">97%</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee">
+  <div class="marquee-track">
+    <div class="marquee-item">MAXwarm® 3.0</div>
+    <div class="marquee-item">8000 mAh</div>
+    <div class="marquee-item">Massage vibratoire</div>
+    <div class="marquee-item">Chaleur thérapeutique</div>
+    <div class="marquee-item">Sans fil & portable</div>
+    <div class="marquee-item">Certifié médical</div>
+    <div class="marquee-item">+50 000 utilisateurs</div>
+    <div class="marquee-item">Garantie 2 ans</div>
+    <div class="marquee-item">Livraison gratuite</div>
+    <div class="marquee-item">MAXwarm® 3.0</div>
+    <div class="marquee-item">8000 mAh</div>
+    <div class="marquee-item">Massage vibratoire</div>
+    <div class="marquee-item">Chaleur thérapeutique</div>
+    <div class="marquee-item">Sans fil & portable</div>
+    <div class="marquee-item">Certifié médical</div>
+    <div class="marquee-item">+50 000 utilisateurs</div>
+    <div class="marquee-item">Garantie 2 ans</div>
+    <div class="marquee-item">Livraison gratuite</div>
+  </div>
+</div>
+
+<!-- PROBLEM -->
+<section id="problem">
+  <div class="prob-layout">
+    <div class="prob-img rv-l">
+      <img src="assets/lifestyle.jpg" alt="Douleur lombaire"/>
+      <div class="prob-img-overlay"></div>
+      <div class="prob-badge">
+        <div class="prob-badge-title">Français souffrent du dos</div>
+        <div class="prob-badge-val">8 / 10</div>
+      </div>
+    </div>
+    <div class="rv-r">
+      <div class="label">Le constat</div>
+      <h2 class="title">UN PROBLÈME QUI TOUCHE <span class="o">TOUT LE MONDE</span></h2>
+      <div class="prob-content">
+        <div class="prob-item">
+          <div class="prob-num">01</div>
+          <div class="prob-text">
+            <h3>Douleurs chroniques persistantes</h3>
+            <p>Les lombalgies touchent 80% de la population adulte et représentent la 1ère cause d'arrêt de travail en France.</p>
+          </div>
+        </div>
+        <div class="prob-item">
+          <div class="prob-num">02</div>
+          <div class="prob-text">
+            <h3>Traitements inefficaces et coûteux</h3>
+            <p>Médicaments, séances kiné, coussins filaires… des solutions partielles qui ne tiennent pas compte de votre mobilité.</p>
+          </div>
+        </div>
+        <div class="prob-item">
+          <div class="prob-num">03</div>
+          <div class="prob-text">
+            <h3>Perte de qualité de vie</h3>
+            <p>La douleur lombaire impacte sommeil, productivité et activités quotidiennes. Il est temps d'agir à la source.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TECHNOLOGY -->
+<section id="technology">
+  <div style="text-align:center; margin-bottom:64px;">
+    <div class="label rv">Notre technologie</div>
+    <h2 class="title rv">LA SCIENCE AU SERVICE DE VOTRE <span class="o">DOS</span></h2>
+  </div>
+  <div class="tech-layout">
+    <div class="tech-img rv-l">
+      <img class="tech-img-main" src="assets/produit-seul.png" alt="IKEEPFIT produit"/>
+      <div class="tech-img-badge">
+        <div class="big">3.0</div>
+        <small>MAXwarm®</small>
+      </div>
+    </div>
+    <div class="rv-r">
+      <div class="label">Fonctionnalités</div>
+      <h2 class="title" style="font-size:clamp(32px,4vw,52px); margin-bottom:32px;">TOUT CE DONT <span class="o">VOUS AVEZ BESOIN</span></h2>
+      <div class="tech-features">
+        <div class="tech-row">
+          <div class="tech-row-icon">
+            <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M11 2a9 9 0 100 18A9 9 0 0011 2z" stroke="#FF6A00" stroke-width="1.5"/><path d="M7 11a4 4 0 108 0" fill="#FF6A00" opacity=".4"/></svg>
+          </div>
+          <div class="tech-row-body">
+            <h3>Chaleur thérapeutique MAXwarm®</h3>
+            <p>3 niveaux : 40°C / 45°C / 50°C — atteint la temp. cible en 90 secondes</p>
+          </div>
+          <div class="tech-row-val">45°</div>
+        </div>
+        <div class="tech-row">
+          <div class="tech-row-icon">
+            <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M4 11c0-3.866 3.134-7 7-7s7 3.134 7 7-3.134 7-7 7-7-3.134-7-7z" stroke="#FF6A00" stroke-width="1.5"/><path d="M9 11l2 2 3-3" stroke="#FF6A00" stroke-width="1.5" stroke-linecap="round"/></svg>
+          </div>
+          <div class="tech-row-body">
+            <h3>Massage vibratoire professionnel</h3>
+            <p>3 modes d'intensité reproduisant les techniques kinésithérapeutiques</p>
+          </div>
+          <div class="tech-row-val">×3</div>
+        </div>
+        <div class="tech-row">
+          <div class="tech-row-icon">
+            <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect x="3" y="7" width="16" height="10" rx="2" stroke="#FF6A00" stroke-width="1.5"/><path d="M7 7V5a2 2 0 014 0v2" stroke="#FF6A00" stroke-width="1.5" stroke-linecap="round"/><path d="M11 12v2" stroke="#FF6A00" stroke-width="1.5" stroke-linecap="round"/></svg>
+          </div>
+          <div class="tech-row-body">
+            <h3>Batterie 8000 mAh rechargeable</h3>
+            <p>4 à 6h d'autonomie, recharge USB-C complète en 3h</p>
+          </div>
+          <div class="tech-row-val">6H</div>
+        </div>
+        <div class="tech-row">
+          <div class="tech-row-icon">
+            <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M6 11h10M11 6l5 5-5 5" stroke="#FF6A00" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div class="tech-row-body">
+            <h3>Poids plume 560g</h3>
+            <p>Taille universelle 40–140 cm, se porte sous les vêtements</p>
+          </div>
+          <div class="tech-row-val">560g</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how-it-works">
+  <div class="center">
+    <div class="label rv">Mode d'emploi</div>
+    <h2 class="title rv">VOIR COMMENT <span class="o">ÇA MARCHE</span></h2>
+    <p class="desc center rv">Simple, rapide, efficace. La démonstration en vidéo.</p>
+  </div>
+
+  <div class="video-trigger rv" id="videoThumb">
+    <video muted loop playsinline id="thumbVideo">
+      <source src="assets/video-demo.mp4" type="video/mp4"/>
+    </video>
+    <div class="video-overlay">
+      <div class="play-btn">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M7 4l13 8-13 8V4z" fill="#FF6A00"/></svg>
+      </div>
+    </div>
+  </div>
+
+  <div class="steps-grid">
+    <div class="step-card rv">
+      <div class="step-num">01</div>
+      <div class="step-icon">
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><path d="M7 14c0-3.866 3.134-7 7-7s7 3.134 7 7-3.134 7-7 7-7-3.134-7-7z" fill="white" opacity=".8"/><path d="M4 19s2-3 10-3 10 3 10 3" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>
+      </div>
+      <h3>Enfilez la ceinture</h3>
+      <p>Ajustez la fixation magnétique à votre morphologie. Compatible 40–140 cm de tour de taille.</p>
+    </div>
+    <div class="step-card rv">
+      <div class="step-num">02</div>
+      <div class="step-icon">
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><path d="M14 7v7l4 4" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="14" cy="14" r="9" stroke="white" stroke-width="2"/></svg>
+      </div>
+      <h3>Choisissez votre mode</h3>
+      <p>Chaleur seule, massage seul, ou thérapie combinée. 3 niveaux d'intensité pour chaque mode.</p>
+    </div>
+    <div class="step-card rv">
+      <div class="step-num">03</div>
+      <div class="step-icon">
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><path d="M7 14l5 5 9-9" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <h3>Vivez sans douleur</h3>
+      <p>Soulagement garanti en 15 minutes. Portez-la au bureau, chez vous ou en déplacement.</p>
+    </div>
+  </div>
+</section>
+
+<!-- BENEFITS -->
+<section id="benefits">
+  <div class="benefits-layout">
+    <div class="rv-l">
+      <div class="label">Résultats prouvés</div>
+      <h2 class="title" style="color:white;">DES CHIFFRES QUI <span class="o">PARLENT</span></h2>
+      <p style="font-size:16px; color:rgba(255,255,255,.55); line-height:1.8; margin-bottom:0;">Basés sur les retours de nos utilisateurs après 30 jours d'utilisation régulière.</p>
+      <div class="stats-2x2">
+        <div class="stat-box">
+          <div class="stat-big" data-target="94">0<span>%</span></div>
+          <div class="stat-label">Réduction de la douleur dès la 1ère semaine</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-big" data-target="50000">0<span>+</span></div>
+          <div class="stat-label">Utilisateurs actifs dans le monde</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-big" data-target="4.8">0<span>★</span></div>
+          <div class="stat-label">Note sur 2 847 avis vérifiés</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-big" data-target="15">0<span>min</span></div>
+          <div class="stat-label">Pour ressentir les premiers effets</div>
+        </div>
+      </div>
+    </div>
+    <div class="benefits-img rv-r">
+      <img src="assets/femme-dos.png" alt="IKEEPFIT porté de dos"/>
+      <div class="benefits-img-overlay"></div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section id="testimonials">
+  <div class="center">
+    <div class="label rv">Ils témoignent</div>
+    <h2 class="title rv">ILS ONT RETROUVÉ <span class="o">LEUR VIE</span></h2>
+  </div>
+  <div style="overflow:hidden;">
+    <div class="testi-track">
+      <div class="testi-card"><div class="testi-stars">★★★★★</div><p class="testi-text">"Après 3 ans de douleurs lombaires, cette ceinture a changé ma vie. Je n'utilise plus d'anti-douleurs depuis 2 mois."</p><div class="testi-author"><div class="testi-av">M</div><div><div class="testi-name">Marie L.</div><div class="testi-info">Infirmière, 42 ans · <span class="verified">✓ Vérifié</span></div></div></div></div>
+      <div class="testi-card"><div class="testi-stars">★★★★★</div><p class="testi-text">"Je travaille 10h/jour devant un écran. La ceinture IKEEPFIT est devenue indispensable, la différence est immédiate."</p><div class="testi-author"><div class="testi-av">T</div><div><div class="testi-name">Thomas R.</div><div class="testi-info">Développeur, 35 ans · <span class="verified">✓ Vérifié</span></div></div></div></div>
+      <div class="testi-card"><div class="testi-stars">★★★★☆</div><p class="testi-text">"Sceptique au début, mais les résultats sont là. La chaleur + massage fait vraiment la différence. Qualité au rendez-vous."</p><div class="testi-author"><div class="testi-av">S</div><div><div class="testi-name">Sophie D.</div><div class="testi-info">Enseignante, 51 ans · <span class="verified">✓ Vérifié</span></div></div></div></div>
+      <div class="testi-card"><div class="testi-stars">★★★★★</div><p class="testi-text">"Mon médecin me l'a recommandé en complément de ma kiné. La batterie tient toute la journée, parfait pour mes déplacements."</p><div class="testi-author"><div class="testi-av">P</div><div><div class="testi-name">Pierre M.</div><div class="testi-info">Commercial, 48 ans · <span class="verified">✓ Vérifié</span></div></div></div></div>
+      <div class="testi-card"><div class="testi-stars">★★★★★</div><p class="testi-text">"J'en ai offert un à ma mère souffrant de hernie discale. Elle est tellement soulagée qu'elle l'a recommandé à toutes ses amies !"</p><div class="testi-author"><div class="testi-av">C</div><div><div class="testi-name">Céline B.</div><div class="testi-info">Retraitée, 67 ans · <span class="verified">✓ Vérifié</span></div></div></div></div>
+      <div class="testi-card"><div class="testi-stars">★★★★★</div><p class="testi-text">"Fini les nuits à me retourner à cause du dos. En 1 semaine d'utilisation j'ai retrouvé un sommeil de qualité. Merci IKEEPFIT !"</p><div class="testi-author"><div class="testi-av">L</div><div><div class="testi-name">Lucas T.</div><div class="testi-info">Sportif, 29 ans · <span class="verified">✓ Vérifié</span></div></div></div></div>
+      <!-- Duplicate for infinite loop -->
+      <div class="testi-card"><div class="testi-stars">★★★★★</div><p class="testi-text">"Après 3 ans de douleurs lombaires, cette ceinture a changé ma vie. Je n'utilise plus d'anti-douleurs depuis 2 mois."</p><div class="testi-author"><div class="testi-av">M</div><div><div class="testi-name">Marie L.</div><div class="testi-info">Infirmière, 42 ans · <span class="verified">✓ Vérifié</span></div></div></div></div>
+      <div class="testi-card"><div class="testi-stars">★★★★★</div><p class="testi-text">"Je travaille 10h/jour devant un écran. La ceinture IKEEPFIT est devenue indispensable, la différence est immédiate."</p><div class="testi-author"><div class="testi-av">T</div><div><div class="testi-name">Thomas R.</div><div class="testi-info">Développeur, 35 ans · <span class="verified">✓ Vérifié</span></div></div></div></div>
+      <div class="testi-card"><div class="testi-stars">★★★★☆</div><p class="testi-text">"Sceptique au début, mais les résultats sont là. La chaleur + massage fait vraiment la différence. Qualité au rendez-vous."</p><div class="testi-author"><div class="testi-av">S</div><div><div class="testi-name">Sophie D.</div><div class="testi-info">Enseignante, 51 ans · <span class="verified">✓ Vérifié</span></div></div></div></div>
+      <div class="testi-card"><div class="testi-stars">★★★★★</div><p class="testi-text">"Mon médecin me l'a recommandé en complément de ma kiné. La batterie tient toute la journée, parfait pour mes déplacements."</p><div class="testi-author"><div class="testi-av">P</div><div><div class="testi-name">Pierre M.</div><div class="testi-info">Commercial, 48 ans · <span class="verified">✓ Vérifié</span></div></div></div></div>
+      <div class="testi-card"><div class="testi-stars">★★★★★</div><p class="testi-text">"J'en ai offert un à ma mère souffrant de hernie discale. Elle est tellement soulagée qu'elle l'a recommandé à toutes ses amies !"</p><div class="testi-author"><div class="testi-av">C</div><div><div class="testi-name">Céline B.</div><div class="testi-info">Retraitée, 67 ans · <span class="verified">✓ Vérifié</span></div></div></div></div>
+      <div class="testi-card"><div class="testi-stars">★★★★★</div><p class="testi-text">"Fini les nuits à me retourner à cause du dos. En 1 semaine d'utilisation j'ai retrouvé un sommeil de qualité. Merci IKEEPFIT !"</p><div class="testi-author"><div class="testi-av">L</div><div><div class="testi-name">Lucas T.</div><div class="testi-info">Sportif, 29 ans · <span class="verified">✓ Vérifié</span></div></div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- SHOWCASE -->
+<section id="showcase">
+  <div class="showcase-layout">
+    <div class="showcase-img rv-l">
+      <img src="assets/femme-dos.png" alt="IKEEPFIT porté de dos"/>
+      <div class="showcase-badge">MAXwarm® 3.0</div>
+    </div>
+    <div class="rv-r">
+      <div class="label">Spécifications</div>
+      <h2 class="title">IKEEPFIT<br><span class="o">PRO BELT</span></h2>
+      <p class="showcase-content" style="font-size:16px; color:var(--mid); line-height:1.8; margin-bottom:32px;">Conçue avec des professionnels de santé. Efficacité cliniquement prouvée pour le soulagement des lombalgies.</p>
+      <div class="spec-grid">
+        <div class="spec-row"><div class="spec-dot"></div><span><strong>Technologie</strong><em>MAXwarm® 3.0 — chauffage en 90 secondes</em></span></div>
+        <div class="spec-row"><div class="spec-dot"></div><span><strong>Batterie</strong><em>8000 mAh USB-C — 4 à 6h d'autonomie</em></span></div>
+        <div class="spec-row"><div class="spec-dot"></div><span><strong>Massage</strong><em>3 niveaux d'intensité vibratoire</em></span></div>
+        <div class="spec-row"><div class="spec-dot"></div><span><strong>Taille</strong><em>Tour de taille 40–140 cm — poids 560g</em></span></div>
+        <div class="spec-row"><div class="spec-dot"></div><span><strong>Température</strong><em>3 niveaux : 40°C / 45°C / 50°C</em></span></div>
+        <div class="spec-row"><div class="spec-dot"></div><span><strong>Certification</strong><em>CE & RoHS — Garantie 2 ans</em></span></div>
+      </div>
+      <a href="#commander" class="btn-prime">
+        Commander maintenant
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- LIFESTYLE -->
+<section id="lifestyle">
+  <div class="lifestyle-layout">
+    <div class="rv-r" style="order:2;">
+      <div class="label">Pour toute la famille</div>
+      <h2 class="lifestyle-content" style="font-family:var(--display); font-size:clamp(38px,4vw,56px); line-height:.95; letter-spacing:1px; margin-bottom:20px; color:var(--black);">UN CADEAU QUI <span style="color:var(--orange)">CHANGE LA VIE</span></h2>
+      <p style="font-size:16px; color:var(--mid); line-height:1.8; margin-bottom:32px;">Offrez à ceux que vous aimez le soulagement qu'ils méritent. IKEEPFIT est le cadeau santé idéal pour parents, proches et amis souffrant du dos.</p>
+      <div class="benefit-list">
+        <div class="benefit-item">
+          <div class="benefit-icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 2l2.4 5 5.6.8-4 3.9.9 5.5L10 14.8l-4.9 2.4.9-5.5L2 7.8l5.6-.8L10 2z" fill="#FF6A00"/></svg></div>
+          <div class="benefit-text"><h4>Idéal en cadeau</h4><p>Livré dans un coffret premium, parfait pour anniversaire, Noël ou fête des mères.</p></div>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 3C6.13 3 3 6.13 3 10s3.13 7 7 7 7-3.13 7-7-3.13-7-7-7zm0 12c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z" fill="#FF6A00" opacity=".4"/><path d="M10.5 7H9.5v4l3.25 1.95.5-.84-2.75-1.65V7z" fill="#FF6A00"/></svg></div>
+          <div class="benefit-text"><h4>Pour toutes les générations</h4><p>Interface intuitive utilisable dès 18 ans, conçue pour être simple et accessible.</p></div>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M17 3H3a2 2 0 00-2 2v10a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2z" stroke="#FF6A00" stroke-width="1.5"/><path d="M1 9h18" stroke="#FF6A00" stroke-width="1.5"/></svg></div>
+          <div class="benefit-text"><h4>Satisfait ou remboursé 30 jours</h4><p>Essayez sans risque. Si vous n'êtes pas satisfait, remboursement intégral garanti.</p></div>
+        </div>
+      </div>
+      <a href="#commander" class="btn-prime">Commander maintenant<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+    </div>
+    <div class="lifestyle-img rv-l" style="order:1;">
+      <img src="assets/lifestyle.jpg" alt="IKEEPFIT cadeau famille"/>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section id="cta">
+  <div class="cta-blob1"></div>
+  <div class="cta-blob2"></div>
+  <div class="cta-inner">
+    <div class="cta-img-float rv-s">
+      <img src="assets/produit-seul.png" alt="IKEEPFIT"/>
+    </div>
+    <div class="label rv" style="justify-content:center; color:var(--orange-l);">Offre exclusive</div>
+    <h2 class="rv">COMMENCEZ À<br><span style="color:var(--orange);">VIVRE MIEUX</span><br>AUJOURD'HUI</h2>
+    <p class="rv">Rejoignez les 50 000 personnes qui ont retrouvé leur liberté de mouvement.<br>Livraison gratuite — Satisfait ou remboursé 30 jours.</p>
+    <div class="cta-btns rv">
+      <a href="#" class="btn-prime" style="font-size:16px; padding:18px 48px;">
+        Commander maintenant
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M3 9h12M10 5l4 4-4 4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+    </div>
+    <div class="cta-note rv">✓ Livraison gratuite &nbsp;·&nbsp; ✓ Remboursement <span>30 jours</span> &nbsp;·&nbsp; ✓ Garantie <span>2 ans</span> &nbsp;·&nbsp; ✓ Certifié CE</div>
+  </div>
+</section>
+
+<!-- COMMANDER -->
+<section id="commander">
+  <div class="product-layout">
+
+    <!-- GALLERY -->
+    <div class="gallery rv-l">
+      <div class="gallery-main">
+        <img id="mainImg" src="assets/femme-avant.png" alt="IKEEPFIT"/>
+      </div>
+      <div class="gallery-thumbs">
+        <div class="thumb active" onclick="switchImg(this,'assets/femme-avant.png')">
+          <img src="assets/femme-avant.png" alt=""/>
+        </div>
+        <div class="thumb" onclick="switchImg(this,'assets/femme-dos.png')">
+          <img src="assets/femme-dos.png" alt=""/>
+        </div>
+        <div class="thumb" onclick="switchImg(this,'assets/produit-seul.png')">
+          <img src="assets/produit-seul.png" alt=""/>
+        </div>
+        <div class="thumb" onclick="switchImg(this,'assets/lifestyle.jpg')">
+          <img src="assets/lifestyle.jpg" alt=""/>
+        </div>
+      </div>
+    </div>
+
+    <!-- INFOS -->
+    <div class="product-info rv-r">
+
+      <div class="product-badge-row">
+        <span class="prod-badge badge-new">Nouveau</span>
+        <span class="prod-badge badge-stock">✓ En stock</span>
+        <span class="prod-badge badge-promo">-20% ce mois</span>
+      </div>
+
+      <h1 class="product-name-big">IKEEPFIT<br><span>PRO BELT</span></h1>
+      <p class="product-sub">Ceinture lombaire chauffante & massante — Technologie MAXwarm® 3.0</p>
+
+      <div class="product-stars-row">
+        <div class="stars">★★★★★</div>
+        <span class="stars-count">4.8/5 · <a href="#testimonials">2 847 avis vérifiés</a></span>
+      </div>
+
+      <div class="price-block">
+        <div class="price-main"><sup>€</sup>89</div>
+        <div class="price-old">€109</div>
+        <div class="price-save">Économisez 20€</div>
+      </div>
+
+      <div class="product-perks">
+        <div class="perk">Chaleur thérapeutique 45°C</div>
+        <div class="perk">Massage vibratoire 3 niveaux</div>
+        <div class="perk">Batterie 8000 mAh — 6h</div>
+        <div class="perk">Sans fil & portable</div>
+        <div class="perk">Taille universelle 40–140 cm</div>
+        <div class="perk">Certifié CE · Garantie 2 ans</div>
+      </div>
+
+      <div class="qty-row">
+        <span class="qty-label">Quantité</span>
+        <div class="qty-ctrl">
+          <button class="qty-btn" onclick="changeQty(-1)">−</button>
+          <input class="qty-val" id="qtyVal" type="text" value="1" readonly/>
+          <button class="qty-btn" onclick="changeQty(1)">+</button>
+        </div>
+      </div>
+
+      <div class="product-btns">
+        <button class="btn-cart btn-buy-now">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M3 1h2l2.5 10h8l2-6H6" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="9" cy="17" r="1.5" fill="white"/><circle cx="15" cy="17" r="1.5" fill="white"/></svg>
+          Acheter maintenant
+        </button>
+        <button class="btn-cart btn-add-cart">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M3 1h2l2.5 10h8l2-6H6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="9" cy="17" r="1.5" fill="currentColor"/><circle cx="15" cy="17" r="1.5" fill="currentColor"/></svg>
+          Ajouter au panier
+        </button>
+      </div>
+
+      <div class="trust-row">
+        <div class="trust-item">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M3 8l8-6 8 6v9a2 2 0 01-2 2H5a2 2 0 01-2-2V8z" stroke="#FF6A00" stroke-width="1.5"/><path d="M8 19V11h6v8" stroke="#FF6A00" stroke-width="1.5"/></svg>
+          Livraison<br/>gratuite
+        </div>
+        <div class="trust-item">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M11 2a9 9 0 100 18A9 9 0 0011 2z" stroke="#FF6A00" stroke-width="1.5"/><path d="M8 11l2 2 4-4" stroke="#FF6A00" stroke-width="1.5" stroke-linecap="round"/></svg>
+          Remboursé<br/>30 jours
+        </div>
+        <div class="trust-item">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M11 2l2 6h6l-5 4 2 6-5-4-5 4 2-6-5-4h6l2-6z" stroke="#FF6A00" stroke-width="1.5" stroke-linejoin="round"/></svg>
+          Garantie<br/>2 ans
+        </div>
+        <div class="trust-item">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect x="3" y="6" width="16" height="13" rx="2" stroke="#FF6A00" stroke-width="1.5"/><path d="M7 6V5a4 4 0 018 0v1" stroke="#FF6A00" stroke-width="1.5"/></svg>
+          Paiement<br/>sécurisé
+        </div>
+      </div>
+
+      <div class="desc-section">
+        <div class="desc-toggle" onclick="toggleDesc(this)">
+          Description du produit
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M4 7l5 5 5-5" stroke="#555" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </div>
+        <div class="desc-body">
+          La ceinture lombaire IKEEPFIT Pro Belt combine chaleur thérapeutique et massage par vibration dans un dispositif sans fil ultra-portable. Conçue avec des professionnels de santé, elle cible les muscles du bas du dos pour un soulagement immédiat et durable.<br/><br/>
+          La technologie MAXwarm® 3.0 atteint la température thérapeutique optimale en seulement 90 secondes et la maintient de façon stable. 3 niveaux de chaleur (40°C, 45°C, 50°C) et 3 intensités de massage s'adaptent à vos besoins. La batterie 8000 mAh rechargeable via USB-C offre jusqu'à 6h d'autonomie.
+        </div>
+        <div class="desc-toggle" onclick="toggleDesc(this)">
+          Contenu de la boîte
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M4 7l5 5 5-5" stroke="#555" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </div>
+        <div class="desc-body">
+          1× Ceinture lombaire IKEEPFIT Pro Belt · 1× Câble de charge USB-C · 1× Manuel d'utilisation français · 1× Pochette de transport · 1× Certificat de garantie 2 ans
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-logo">IKEEP<span>FIT</span></div>
+    <div class="footer-links">
+      <a href="#">Mentions légales</a>
+      <a href="#">Confidentialité</a>
+      <a href="#">Contact</a>
+      <a href="#">SAV</a>
+    </div>
+    <div class="footer-copy">© 2026 IKEEPFIT · Tous droits réservés</div>
+  </div>
+</footer>
+
+<!-- VIDEO MODAL -->
+<div id="modal">
+  <div class="modal-bg" id="modalBg"></div>
+  <div class="modal-box">
+    <button class="modal-close" id="modalClose">✕</button>
+    <video id="modalVideo" controls>
+      <source src="assets/video-demo.mp4" type="video/mp4"/>
+    </video>
+  </div>
+</div>
+
+<script>
+gsap.registerPlugin(ScrollTrigger);
+
+// ─── CURSOR ───
+const dot = document.getElementById('cursor-dot');
+const ring = document.getElementById('cursor-ring');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove', e => {
+  mx=e.clientX; my=e.clientY;
+  gsap.to(dot,{x:mx,y:my,duration:.08});
+});
+(function loop(){
+  rx+=(mx-rx)*.1; ry+=(my-ry)*.1;
+  ring.style.transform=`translate(${rx}px,${ry}px) translate(-50%,-50%)`;
+  requestAnimationFrame(loop);
+})();
+document.querySelectorAll('a,button').forEach(el=>{
+  el.addEventListener('mouseenter',()=>document.body.classList.add('cursor-grow'));
+  el.addEventListener('mouseleave',()=>document.body.classList.remove('cursor-grow'));
+});
+
+// ─── PROGRESS ───
+const prog=document.getElementById('prog');
+window.addEventListener('scroll',()=>{
+  const pct=(window.scrollY/(document.documentElement.scrollHeight-innerHeight))*100;
+  prog.style.width=pct+'%';
+});
+
+// ─── NAV ───
+const nav=document.getElementById('nav');
+window.addEventListener('scroll',()=>nav.classList.toggle('stuck',scrollY>60));
+
+// ─── HERO ENTRANCE ───
+gsap.timeline({delay:.1})
+  .fromTo('.hero-tag',{opacity:0,y:20},{opacity:1,y:0,duration:.6,ease:'power3.out'})
+  .fromTo('.hero-title .line span',{opacity:0,y:70},{opacity:1,y:0,duration:.75,stagger:.12,ease:'power4.out'},'-=.2')
+  .fromTo('.hero-sub',{opacity:0,y:20},{opacity:1,y:0,duration:.6,ease:'power3.out'},'-=.3')
+  .fromTo('.hero-btns',{opacity:0,y:20},{opacity:1,y:0,duration:.6,ease:'power3.out'},'-=.3')
+  .fromTo('.hero-trust',{opacity:0,y:20},{opacity:1,y:0,duration:.6,ease:'power3.out'},'-=.3')
+  .fromTo('.hero-visual',{opacity:0,x:50},{opacity:1,x:0,duration:.9,ease:'power3.out'},'-=.7')
+  .fromTo('.chip',{opacity:0,scale:.7},{opacity:1,scale:1,duration:.5,stagger:.15,ease:'back.out(2)'},'-=.4');
+
+// ─── REVEAL ───
+gsap.utils.toArray('.rv').forEach(el=>
+  gsap.fromTo(el,{opacity:0,y:40},{opacity:1,y:0,duration:.8,ease:'power3.out',
+    scrollTrigger:{trigger:el,start:'top 88%',toggleActions:'play none none none'}}));
+gsap.utils.toArray('.rv-l').forEach(el=>
+  gsap.fromTo(el,{opacity:0,x:-40},{opacity:1,x:0,duration:.8,ease:'power3.out',
+    scrollTrigger:{trigger:el,start:'top 88%',toggleActions:'play none none none'}}));
+gsap.utils.toArray('.rv-r').forEach(el=>
+  gsap.fromTo(el,{opacity:0,x:40},{opacity:1,x:0,duration:.8,ease:'power3.out',
+    scrollTrigger:{trigger:el,start:'top 88%',toggleActions:'play none none none'}}));
+gsap.utils.toArray('.rv-s').forEach(el=>
+  gsap.fromTo(el,{opacity:0,scale:.85},{opacity:1,scale:1,duration:.8,ease:'back.out(1.5)',
+    scrollTrigger:{trigger:el,start:'top 88%',toggleActions:'play none none none'}}));
+
+// ─── PROBLEM ITEMS ───
+gsap.fromTo('.prob-item',{opacity:0,x:30},{opacity:1,x:0,duration:.5,stagger:.12,ease:'power3.out',
+  scrollTrigger:{trigger:'.prob-content',start:'top 80%'}});
+
+// ─── TECH ROWS ───
+gsap.fromTo('.tech-row',{opacity:0,x:30},{opacity:1,x:0,duration:.5,stagger:.1,ease:'power3.out',
+  scrollTrigger:{trigger:'.tech-features',start:'top 80%'}});
+
+// ─── STEP CARDS ───
+gsap.fromTo('.step-card',{opacity:0,y:40},{opacity:1,y:0,duration:.5,stagger:.15,ease:'power3.out',
+  scrollTrigger:{trigger:'.steps-grid',start:'top 80%'}});
+
+// ─── SPEC ROWS ───
+gsap.fromTo('.spec-row',{opacity:0,x:-20},{opacity:1,x:0,duration:.4,stagger:.08,ease:'power3.out',
+  scrollTrigger:{trigger:'.spec-grid',start:'top 80%'}});
+
+// ─── STAT COUNTERS ───
+function animCount(el,target){
+  const isFloat=target%1!==0;
+  const step=target/60;
+  let v=0;
+  const t=setInterval(()=>{
+    v+=step;
+    if(v>=target){v=target;clearInterval(t);}
+    el.querySelector('span').previousSibling.textContent=isFloat?v.toFixed(1):Math.floor(v).toLocaleString('fr-FR');
+  },16);
+}
+document.querySelectorAll('[data-target]').forEach(el=>{
+  ScrollTrigger.create({trigger:el,start:'top 85%',once:true,
+    onEnter:()=>animCount(el,parseFloat(el.getAttribute('data-target')))});
+});
+
+// ─── 3D TILT on hero card ───
+const heroWrap=document.querySelector('.hero-img-wrap');
+if(heroWrap){
+  document.addEventListener('mousemove',e=>{
+    const rect=heroWrap.getBoundingClientRect();
+    const cx=rect.left+rect.width/2,cy=rect.top+rect.height/2;
+    const dx=(e.clientX-cx)/rect.width*14,dy=(e.clientY-cy)/rect.height*14;
+    heroWrap.style.transform=`perspective(800px) rotateY(${dx}deg) rotateX(${-dy}deg)`;
+  });
+  document.addEventListener('mouseleave',()=>{
+    heroWrap.style.transform='perspective(800px) rotateY(0deg) rotateX(0deg)';
+  });
+}
+
+// ─── IMAGE PARALLAX ───
+document.querySelectorAll('.prob-img img,.tech-img-main,.benefits-img img,.lifestyle-img img').forEach(img=>{
+  gsap.to(img,{yPercent:-8,ease:'none',scrollTrigger:{trigger:img,start:'top bottom',end:'bottom top',scrub:true}});
+});
+
+// ─── VIDEO MODAL ───
+const modal=document.getElementById('modal');
+const modalVideo=document.getElementById('modalVideo');
+const openModal=document.getElementById('openModal');
+const videoThumb=document.getElementById('videoThumb');
+const thumbVideo=document.getElementById('thumbVideo');
+
+function openVideoModal(){
+  modal.classList.add('open');
+  modalVideo.play();
+}
+function closeVideoModal(){
+  modal.classList.remove('open');
+  modalVideo.pause();
+  modalVideo.currentTime=0;
+}
+if(openModal) openModal.addEventListener('click',e=>{e.preventDefault();openVideoModal();});
+if(videoThumb) videoThumb.addEventListener('click',openVideoModal);
+document.getElementById('modalClose').addEventListener('click',closeVideoModal);
+document.getElementById('modalBg').addEventListener('click',closeVideoModal);
+document.addEventListener('keydown',e=>e.key==='Escape'&&closeVideoModal());
+
+// ─── THUMB VIDEO hover play ───
+if(thumbVideo){
+  videoThumb.addEventListener('mouseenter',()=>thumbVideo.play());
+  videoThumb.addEventListener('mouseleave',()=>{thumbVideo.pause();});
+}
+
+// ─── PRODUCT GALLERY ───
+function switchImg(thumb, src) {
+  const main = document.getElementById('mainImg');
+  main.classList.add('switching');
+  setTimeout(() => {
+    main.src = src;
+    main.classList.remove('switching');
+  }, 200);
+  document.querySelectorAll('.thumb').forEach(t => t.classList.remove('active'));
+  thumb.classList.add('active');
+}
+
+// ─── QTY ───
+function changeQty(delta) {
+  const el = document.getElementById('qtyVal');
+  let v = parseInt(el.value) + delta;
+  if (v < 1) v = 1;
+  if (v > 10) v = 10;
+  el.value = v;
+}
+
+// ─── ACCORDION ───
+function toggleDesc(toggle) {
+  toggle.classList.toggle('open');
+  const body = toggle.nextElementSibling;
+  body.classList.toggle('open');
+}
+
+// ─── PRODUCT SECTION REVEAL ───
+gsap.fromTo('.gallery',{opacity:0,x:-40},{opacity:1,x:0,duration:.8,ease:'power3.out',
+  scrollTrigger:{trigger:'#commander',start:'top 80%'}});
+gsap.fromTo('.product-info',{opacity:0,x:40},{opacity:1,x:0,duration:.8,ease:'power3.out',
+  scrollTrigger:{trigger:'#commander',start:'top 80%'}});
+gsap.fromTo('.product-perks .perk',{opacity:0,y:15},{opacity:1,y:0,duration:.4,stagger:.06,ease:'power3.out',
+  scrollTrigger:{trigger:'.product-perks',start:'top 85%'}});
+gsap.fromTo('.trust-item',{opacity:0,y:20},{opacity:1,y:0,duration:.4,stagger:.08,ease:'power3.out',
+  scrollTrigger:{trigger:'.trust-row',start:'top 90%'}});
+
+// ─── TESTIMONIALS STAGGER ───
+gsap.fromTo('.testi-card',{opacity:0,y:30},{opacity:1,y:0,duration:.5,stagger:.1,ease:'power3.out',
+  scrollTrigger:{trigger:'#testimonials',start:'top 80%'}});
+</script>
+</body>
+</html>
